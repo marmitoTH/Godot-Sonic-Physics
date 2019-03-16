@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/instaShield.wav-a8ac71b44d4abd0ab670f138e3a263a9.sample"
+
+[deps]
+
+source_file="res://Audio/sfx/instaShield.wav"
+dest_files=[ "res://.import/instaShield.wav-a8ac71b44d4abd0ab670f138e3a263a9.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0

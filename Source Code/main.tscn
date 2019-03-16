@@ -1,0 +1,779 @@
+[gd_scene load_steps=49 format=2]
+
+[ext_resource path="res://Gameplay Scripts/main.gd" type="Script" id=1]
+[ext_resource path="res://Gameplay Scripts/player_camera.gd" type="Script" id=2]
+[ext_resource path="res://Gameplay Scripts/player_physics.gd" type="Script" id=3]
+[ext_resource path="res://Gameplay Scripts/state_machine.gd" type="Script" id=4]
+[ext_resource path="res://Gameplay Scripts/States/on_ground.gd" type="Script" id=5]
+[ext_resource path="res://Gameplay Scripts/States/on_air.gd" type="Script" id=6]
+[ext_resource path="res://Gameplay Scripts/States/spin_dash.gd" type="Script" id=7]
+[ext_resource path="res://Gameplay Scripts/States/super_peel_out.gd" type="Script" id=8]
+[ext_resource path="res://Sprites/Sonic.png" type="Texture" id=9]
+[ext_resource path="res://Gameplay Scripts/character_animator.gd" type="Script" id=10]
+[ext_resource path="res://Gameplay Scripts/character_vfx.gd" type="Script" id=11]
+[ext_resource path="res://Sprites/spinDash.png" type="Texture" id=12]
+[ext_resource path="res://Sprites/instaShield.png" type="Texture" id=13]
+[ext_resource path="res://Gameplay Scripts/audio_player.gd" type="Script" id=14]
+[ext_resource path="res://Audio/sfx/jump.wav" type="AudioStream" id=15]
+[ext_resource path="res://Audio/sfx/brake.wav" type="AudioStream" id=16]
+[ext_resource path="res://Audio/sfx/spin.wav" type="AudioStream" id=17]
+[ext_resource path="res://Audio/sfx/spinDashCharge.wav" type="AudioStream" id=18]
+[ext_resource path="res://Audio/sfx/spinDashRelease.wav" type="AudioStream" id=19]
+[ext_resource path="res://Audio/sfx/peelOutCharge.wav" type="AudioStream" id=20]
+[ext_resource path="res://Audio/sfx/peelOutRelease.wav" type="AudioStream" id=21]
+[ext_resource path="res://Audio/sfx/instaShield.wav" type="AudioStream" id=22]
+[ext_resource path="res://Test Zone/loop_part.res" type="PackedScene" id=23]
+[ext_resource path="res://Test Zone/loop_part_blue.res" type="PackedScene" id=24]
+[ext_resource path="res://Test Zone/loop_part_red.res" type="PackedScene" id=25]
+[ext_resource path="res://General/MaskSetterRed.res" type="PackedScene" id=26]
+[ext_resource path="res://General/MaskSetterBlue.res" type="PackedScene" id=27]
+[ext_resource path="res://General/MaskSetterInvert.res" type="PackedScene" id=28]
+[ext_resource path="res://Test Zone/block.tscn" type="PackedScene" id=29]
+[ext_resource path="res://Sprites/prototype_tile.png" type="Texture" id=30]
+[ext_resource path="res://Audio/musics/sky_sanctuary_zone.ogg" type="AudioStream" id=31]
+
+[sub_resource type="Animation" id=1]
+resource_name = "Braking"
+length = 0.52
+step = 0.13
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.133686, 0.26, 0.39 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 38, 39, 40, 41 ]
+}
+
+[sub_resource type="Animation" id=2]
+length = 3.5
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 2.7, 3, 3.1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 0, 5, 6 ]
+}
+
+[sub_resource type="Animation" id=3]
+length = 10.3
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.3, 0.6, 0.9, 1.2, 1.48712, 1.8, 2.08852, 2.4, 3.1, 3.4, 3.7, 4, 4.3, 4.6, 4.88712, 5.2, 5.48852, 5.8, 6.5, 6.8, 7.1, 7.4, 7.7, 8, 8.28712, 8.6, 8.88852, 9.2, 9.9, 10.2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 7, 8, 7, 8, 7, 8, 7, 8, 9, 9, 7, 8, 7, 8, 7, 8, 7, 8, 9, 9, 7, 8, 7, 8, 7, 8, 7, 8, 9, 9, 10 ]
+}
+
+[sub_resource type="Animation" id=4]
+length = 0.6
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 11, 12 ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "LookDown"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 3, 4 ]
+}
+
+[sub_resource type="Animation" id=6]
+resource_name = "LookUp"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 1, 2 ]
+}
+
+[sub_resource type="Animation" id=7]
+resource_name = "PeelOut"
+length = 0.8
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 60, 61, 62, 63 ]
+}
+
+[sub_resource type="Animation" id=8]
+resource_name = "Pushing"
+length = 2.1
+loop = true
+step = 0.53
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.53, 1.06, 1.59 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 52, 53, 54, 55 ]
+}
+
+[sub_resource type="Animation" id=9]
+length = 0.7
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 26, 30, 27, 30, 28, 30, 29, 30 ]
+}
+
+[sub_resource type="Animation" id=10]
+length = 0.8
+loop = true
+step = 0.2
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 22, 23, 24, 25 ]
+}
+
+[sub_resource type="Animation" id=11]
+length = 0.24
+loop = true
+step = 0.04
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.04, 0.08, 0.12, 0.16, 0.2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 31, 32, 33, 34, 35, 36 ]
+}
+
+[sub_resource type="Animation" id=12]
+length = 1.6
+loop = true
+step = 0.2
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 17, 18, 19, 20, 21, 14, 15, 16 ]
+}
+
+[sub_resource type="Animation" id=13]
+length = 0.28
+loop = true
+step = 0.04
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.24 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6 ]
+}
+
+[sub_resource type="Animation" id=14]
+resource_name = "InstaShield"
+length = 0.12
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.02, 0.04, 0.06, 0.08, 0.1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5 ]
+}
+
+[sub_resource type="CapsuleShape2D" id=15]
+radius = 9.03
+height = 6.05999
+
+[sub_resource type="CircleShape2D" id=16]
+radius = 9.0
+
+[sub_resource type="RayShape2D" id=17]
+
+[node name="main" type="Node"]
+script = ExtResource( 1 )
+
+[node name="PlayerCamera" type="Node2D" parent="."]
+editor/display_folded = true
+position = Vector2( 212, 120 )
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CameraScroll" type="Node2D" parent="PlayerCamera"]
+editor/display_folded = true
+
+[node name="Camera2D" type="Camera2D" parent="PlayerCamera/CameraScroll"]
+current = true
+limit_left = 0
+limit_top = 0
+drag_margin_h_enabled = false
+drag_margin_v_enabled = false
+drag_margin_left = 0.08
+drag_margin_top = 0.4
+drag_margin_right = 0.0
+drag_margin_bottom = 0.15
+editor_draw_limits = true
+
+[node name="Player" type="KinematicBody2D" parent="."]
+editor/display_folded = true
+position = Vector2( 33, 313.92 )
+z_index = 1
+collision/safe_margin = 0.1
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="StateMachine" type="Node" parent="Player"]
+editor/display_folded = true
+script = ExtResource( 4 )
+
+[node name="OnGround" type="Node" parent="Player/StateMachine"]
+script = ExtResource( 5 )
+
+[node name="OnAir" type="Node" parent="Player/StateMachine"]
+script = ExtResource( 6 )
+
+[node name="SpinDash" type="Node" parent="Player/StateMachine"]
+script = ExtResource( 7 )
+
+[node name="SuperPeelOut" type="Node" parent="Player/StateMachine"]
+script = ExtResource( 8 )
+
+[node name="Characters" type="Node2D" parent="Player"]
+editor/display_folded = true
+position = Vector2( 0, -4 )
+
+[node name="Sonic" type="Sprite" parent="Player/Characters"]
+editor/display_folded = true
+texture = ExtResource( 9 )
+vframes = 17
+hframes = 17
+region_rect = Rect2( 0, 0, 48, 48 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Player/Characters/Sonic"]
+anims/Braking = SubResource( 1 )
+anims/Idle1 = SubResource( 2 )
+anims/Idle2 = SubResource( 3 )
+anims/Idle3 = SubResource( 4 )
+anims/LookDown = SubResource( 5 )
+anims/LookUp = SubResource( 6 )
+anims/PeelOut = SubResource( 7 )
+anims/Pushing = SubResource( 8 )
+anims/Rolling = SubResource( 9 )
+anims/Running = SubResource( 10 )
+anims/SpinDashCharge = SubResource( 11 )
+anims/Walking = SubResource( 12 )
+script = ExtResource( 10 )
+
+[node name="VFX" type="Node2D" parent="Player/Characters"]
+editor/display_folded = true
+script = ExtResource( 11 )
+
+[node name="ChargeDust" type="Sprite" parent="Player/Characters/VFX"]
+editor/display_folded = true
+visible = false
+position = Vector2( -19, 13 )
+texture = ExtResource( 12 )
+hframes = 7
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Player/Characters/VFX/ChargeDust"]
+anims/ChargeDust = SubResource( 13 )
+
+[node name="InstaShield" type="Sprite" parent="Player/Characters/VFX"]
+editor/display_folded = true
+visible = false
+position = Vector2( 0, 9 )
+texture = ExtResource( 13 )
+hframes = 6
+frame = 5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Player/Characters/VFX/InstaShield"]
+anims/InstaShield = SubResource( 14 )
+
+[node name="AudioPlayer" type="Node2D" parent="Player"]
+editor/display_folded = true
+script = ExtResource( 14 )
+
+[node name="jump" type="AudioStreamPlayer" parent="Player/AudioPlayer"]
+stream = ExtResource( 15 )
+volume_db = -15.0
+
+[node name="brake" type="AudioStreamPlayer" parent="Player/AudioPlayer"]
+stream = ExtResource( 16 )
+volume_db = -20.0
+
+[node name="spin" type="AudioStreamPlayer" parent="Player/AudioPlayer"]
+stream = ExtResource( 17 )
+volume_db = -10.0
+
+[node name="SpinDashCharge" type="AudioStreamPlayer" parent="Player/AudioPlayer"]
+stream = ExtResource( 18 )
+volume_db = -10.0
+
+[node name="SpinDashRelease" type="AudioStreamPlayer" parent="Player/AudioPlayer"]
+stream = ExtResource( 19 )
+volume_db = -10.0
+
+[node name="PeelOutCharge" type="AudioStreamPlayer" parent="Player/AudioPlayer"]
+stream = ExtResource( 20 )
+volume_db = -10.0
+
+[node name="PeelOutRelease" type="AudioStreamPlayer" parent="Player/AudioPlayer"]
+stream = ExtResource( 21 )
+volume_db = -10.0
+
+[node name="InstaShield" type="AudioStreamPlayer" parent="Player/AudioPlayer"]
+stream = ExtResource( 22 )
+volume_db = -25.0
+
+[node name="HighCollider" type="CollisionShape2D" parent="Player"]
+position = Vector2( 0, -5 )
+shape = SubResource( 15 )
+
+[node name="LowCollider" type="CollisionShape2D" parent="Player"]
+position = Vector2( 0, 5 )
+shape = SubResource( 16 )
+
+[node name="RayShape" type="CollisionShape2D" parent="Player"]
+shape = SubResource( 17 )
+
+[node name="LeftGroundSensor" type="RayCast2D" parent="Player"]
+position = Vector2( -9, 0 )
+enabled = true
+cast_to = Vector2( 0, 36 )
+
+[node name="RightGroundSensor" type="RayCast2D" parent="Player"]
+position = Vector2( 9, 0 )
+enabled = true
+cast_to = Vector2( 0, 36 )
+
+[node name="RightWallSensor" type="RayCast2D" parent="Player"]
+enabled = true
+cast_to = Vector2( 11, 0 )
+
+[node name="LeftWallSensor" type="RayCast2D" parent="Player"]
+enabled = true
+cast_to = Vector2( -11, 0 )
+
+[node name="Level" type="Node2D" parent="."]
+editor/display_folded = true
+
+[node name="FullLoop" type="Node2D" parent="Level"]
+editor/display_folded = true
+position = Vector2( 541, 537 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="loop_part" parent="Level/FullLoop" instance=ExtResource( 23 )]
+position = Vector2( -82, -84 )
+rotation = 1.5708
+z_index = 2
+
+[node name="loop_part2" parent="Level/FullLoop" instance=ExtResource( 23 )]
+position = Vector2( 85, -82 )
+rotation = 3.14159
+z_index = 2
+
+[node name="loop_part_blue" parent="Level/FullLoop" instance=ExtResource( 24 )]
+position = Vector2( -84, 83 )
+
+[node name="loop_part_red" parent="Level/FullLoop" instance=ExtResource( 25 )]
+position = Vector2( 83, 85 )
+z_index = 2
+
+[node name="MaskSetterRed" parent="Level/FullLoop" instance=ExtResource( 26 )]
+position = Vector2( -170, 94 )
+
+[node name="MaskSetterRed2" parent="Level/FullLoop" instance=ExtResource( 26 )]
+position = Vector2( -170, 31 )
+
+[node name="MaskSetterBlue" parent="Level/FullLoop" instance=ExtResource( 27 )]
+position = Vector2( 174, 95 )
+
+[node name="MaskSetterBlue2" parent="Level/FullLoop" instance=ExtResource( 27 )]
+position = Vector2( 174, 32 )
+
+[node name="MaskSetterInvert" parent="Level/FullLoop" instance=ExtResource( 28 )]
+position = Vector2( 0, -95 )
+
+[node name="loop_part3" parent="Level" instance=ExtResource( 23 )]
+position = Vector2( 272, 620 )
+z_index = 2
+
+[node name="loop_part4" parent="Level" instance=ExtResource( 23 )]
+position = Vector2( 146, 453 )
+rotation = -3.14159
+z_index = 2
+
+[node name="loop_part6" parent="Level" instance=ExtResource( 23 )]
+position = Vector2( 948, 916 )
+z_index = 2
+
+[node name="loop_part9" parent="Level" instance=ExtResource( 23 )]
+position = Vector2( 1498, 939 )
+z_index = 2
+
+[node name="loop_part8" parent="Level" instance=ExtResource( 23 )]
+position = Vector2( 1244, 752 )
+rotation = 1.5708
+z_index = 2
+
+[node name="loop_part5" parent="Level" instance=ExtResource( 23 )]
+position = Vector2( 822, 749 )
+rotation = -3.14159
+z_index = 2
+
+[node name="loop_part7" parent="Level" instance=ExtResource( 23 )]
+position = Vector2( 1115, 918 )
+rotation = -1.5708
+z_index = 2
+
+[node name="loop_part10" parent="Level" instance=ExtResource( 23 )]
+position = Vector2( 1665, 941 )
+rotation = -1.5708
+z_index = 2
+
+[node name="block" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 31, 400 )
+z_index = 2
+
+[node name="block8" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 1359, 700 )
+z_index = 2
+
+[node name="block11" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 1423, 762 )
+z_index = 2
+
+[node name="block14" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 1742, 765 )
+z_index = 2
+
+[node name="block9" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 1423, 700 )
+z_index = 2
+
+[node name="block13" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 1742, 703 )
+z_index = 2
+
+[node name="block15" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 1806, 703 )
+z_index = 2
+
+[node name="block16" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 1806, 641 )
+z_index = 2
+
+[node name="block17" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 1806, 579 )
+z_index = 2
+
+[node name="block18" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 1806, 517 )
+z_index = 2
+
+[node name="block10" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 1423, 824 )
+z_index = 2
+
+[node name="block12" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 1742, 827 )
+z_index = 2
+
+[node name="block2" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 387, 696 )
+z_index = 2
+
+[node name="block6" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 579, 696 )
+z_index = 2
+
+[node name="block3" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 451, 696 )
+z_index = 2
+
+[node name="block5" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 643, 696 )
+z_index = 2
+
+[node name="block4" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 515, 696 )
+z_index = 2
+
+[node name="block7" parent="Level" instance=ExtResource( 29 )]
+position = Vector2( 707, 696 )
+z_index = 2
+
+[node name="cirecle" type="Node2D" parent="."]
+editor/display_folded = true
+position = Vector2( 1024, 512 )
+scale = Vector2( 2, 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Node2D" type="Node2D" parent="cirecle"]
+editor/display_folded = true
+position = Vector2( -32, -32 )
+scale = Vector2( 0.5, 0.5 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="cirecle/Node2D"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 30 )
+region_enabled = true
+region_rect = Rect2( 640, 0, 128, 128 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="cirecle/Node2D"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="cirecle/Node2D/StaticBody2D"]
+visible = false
+polygon = PoolVector2Array( -64, 64, -61, 38, -55, 16, -42, -8, -28, -25, -8, -42, 12, -53, 36, -61, 64, -64, 64, 64 )
+
+[node name="Node2D2" type="Node2D" parent="cirecle"]
+editor/display_folded = true
+position = Vector2( 32, -32 )
+rotation = 1.5708
+scale = Vector2( 0.5, 0.5 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="cirecle/Node2D2"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 30 )
+region_enabled = true
+region_rect = Rect2( 640, 0, 128, 128 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="cirecle/Node2D2"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="cirecle/Node2D2/StaticBody2D"]
+visible = false
+polygon = PoolVector2Array( -64, 64, -61, 38, -55, 16, -42, -8, -28, -25, -8, -42, 12, -53, 36, -61, 64, -64, 64, 64 )
+
+[node name="Node2D3" type="Node2D" parent="cirecle"]
+editor/display_folded = true
+position = Vector2( 32, 32 )
+rotation = -3.14159
+scale = Vector2( 0.5, 0.5 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="cirecle/Node2D3"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 30 )
+region_enabled = true
+region_rect = Rect2( 640, 0, 128, 128 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="cirecle/Node2D3"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="cirecle/Node2D3/StaticBody2D"]
+visible = false
+polygon = PoolVector2Array( -64, 64, -61, 38, -55, 16, -42, -8, -28, -25, -8, -42, 12, -53, 36, -61, 64, -64, 64, 64 )
+
+[node name="Node2D4" type="Node2D" parent="cirecle"]
+editor/display_folded = true
+position = Vector2( -32, 32 )
+rotation = -1.5708
+scale = Vector2( 0.5, 0.5 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="cirecle/Node2D4"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 30 )
+region_enabled = true
+region_rect = Rect2( 640, 0, 128, 128 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="cirecle/Node2D4"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="cirecle/Node2D4/StaticBody2D"]
+visible = false
+polygon = PoolVector2Array( -64, 64, -61, 38, -55, 16, -42, -8, -28, -25, -8, -42, 12, -53, 36, -61, 64, -64, 64, 64 )
+
+[node name="cirecle2" type="Node2D" parent="."]
+editor/display_folded = true
+position = Vector2( 1581, 576 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Node2D" type="Node2D" parent="cirecle2"]
+editor/display_folded = true
+position = Vector2( -32, -32 )
+scale = Vector2( 0.5, 0.5 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="cirecle2/Node2D"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 30 )
+region_enabled = true
+region_rect = Rect2( 640, 0, 128, 128 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="cirecle2/Node2D"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="cirecle2/Node2D/StaticBody2D"]
+visible = false
+polygon = PoolVector2Array( -64, 64, -61, 38, -55, 16, -42, -8, -28, -25, -8, -42, 12, -53, 36, -61, 64, -64, 64, 64 )
+
+[node name="Node2D2" type="Node2D" parent="cirecle2"]
+editor/display_folded = true
+position = Vector2( 32, -32 )
+rotation = 1.5708
+scale = Vector2( 0.5, 0.5 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="cirecle2/Node2D2"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 30 )
+region_enabled = true
+region_rect = Rect2( 640, 0, 128, 128 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="cirecle2/Node2D2"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="cirecle2/Node2D2/StaticBody2D"]
+visible = false
+polygon = PoolVector2Array( -64, 64, -61, 38, -55, 16, -42, -8, -28, -25, -8, -42, 12, -53, 36, -61, 64, -64, 64, 64 )
+
+[node name="Node2D3" type="Node2D" parent="cirecle2"]
+editor/display_folded = true
+position = Vector2( 32, 32 )
+rotation = -3.14159
+scale = Vector2( 0.5, 0.5 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="cirecle2/Node2D3"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 30 )
+region_enabled = true
+region_rect = Rect2( 640, 0, 128, 128 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="cirecle2/Node2D3"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="cirecle2/Node2D3/StaticBody2D"]
+visible = false
+polygon = PoolVector2Array( -64, 64, -61, 38, -55, 16, -42, -8, -28, -25, -8, -42, 12, -53, 36, -61, 64, -64, 64, 64 )
+
+[node name="Node2D4" type="Node2D" parent="cirecle2"]
+editor/display_folded = true
+position = Vector2( -32, 32 )
+rotation = -1.5708
+scale = Vector2( 0.5, 0.5 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="cirecle2/Node2D4"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 30 )
+region_enabled = true
+region_rect = Rect2( 640, 0, 128, 128 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="cirecle2/Node2D4"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="cirecle2/Node2D4/StaticBody2D"]
+visible = false
+polygon = PoolVector2Array( -64, 64, -61, 38, -55, 16, -42, -8, -28, -25, -8, -42, 12, -53, 36, -61, 64, -64, 64, 64 )
+
+[node name="StageMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 31 )
+autoplay = true
+
+[connection signal="animation_finished" from="Player/Characters/Sonic/AnimationPlayer" to="Player/StateMachine" method="_on_AnimationPlayer_animation_finished"]
